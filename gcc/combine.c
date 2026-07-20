@@ -709,6 +709,7 @@ setup_incoming_promotions ()
   int unsignedp;
   rtx first = get_insns ();
 
+  if (TARGET_JP_PROMOTE)
   for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
     if (FUNCTION_ARG_REGNO_P (regno)
 	&& (reg = promoted_input_arg (regno, &mode, &unsignedp)) != 0)

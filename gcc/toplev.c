@@ -3140,7 +3140,7 @@ rest_of_compilation(tree decl)
 
     if (optimize > 0)
     {
-        TIMEVAR(jump_time, jump_optimize(insns, JUMP_CROSS_JUMP,
+        TIMEVAR(jump_time, jump_optimize(insns, TARGET_JP_NOCROSSJUMP ? !JUMP_CROSS_JUMP : JUMP_CROSS_JUMP,
                                          JUMP_NOOP_MOVES,
                                          !JUMP_AFTER_REGSCAN));
 

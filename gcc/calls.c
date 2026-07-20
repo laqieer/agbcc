@@ -1378,7 +1378,7 @@ expand_call (exp, target, ignore)
       unsignedp = TREE_UNSIGNED (type);
 
 #ifdef PROMOTE_FUNCTION_ARGS
-      mode = promote_mode (type, mode, &unsignedp, 1);
+      if (TARGET_JP_PROMOTE) mode = promote_mode (type, mode, &unsignedp, 1);
 #endif
 
       args[i].unsignedp = unsignedp;

@@ -800,6 +800,13 @@ thumb_function_prologue(FILE *f, int frame_size)
         int mask = live_regs_mask & 0xff;
         int next_hi_reg;
 
+        if (TARGET_JP_REGORDER)
+        {
+            for (next_hi_reg = 8; next_hi_reg < 13; next_hi_reg++)
+                if (regs_ever_live[next_hi_reg] && !call_used_regs[next_hi_reg])
+                    break;
+        }
+        else
         for (next_hi_reg = 12; next_hi_reg > 7; next_hi_reg--)
         {
             if (regs_ever_live[next_hi_reg] && !call_used_regs[next_hi_reg])
@@ -826,12 +833,22 @@ thumb_function_prologue(FILE *f, int frame_size)
                                 reg_names[next_hi_reg]);
                     high_regs_pushed--;
                     if (high_regs_pushed)
+                    {
+                        if (TARGET_JP_REGORDER)
+                            for (next_hi_reg++; next_hi_reg < 13; next_hi_reg++)
+                            {
+                                if (regs_ever_live[next_hi_reg]
+                                    && !call_used_regs[next_hi_reg])
+                                    break;
+                            }
+                        else
                         for (next_hi_reg--; next_hi_reg > 7; next_hi_reg--)
                         {
                             if (regs_ever_live[next_hi_reg]
                                 && !call_used_regs[next_hi_reg])
                                 break;
                         }
+                    }
                     else
                     {
                         mask &= ~((1 << regno) - 1);

@@ -42,6 +42,9 @@ Boston, MA 02111-1307, USA.  */
 
 /* Nonzero if all call instructions should be indirect.  */
 #define ARM_FLAG_LONG_CALLS	(0x10000) /* same as in arm.h */
+#define ARM_FLAG_JP_PROMOTE	(0x20000)
+#define ARM_FLAG_JP_NOCROSSJUMP	(0x40000)
+#define ARM_FLAG_JP_REGORDER	(0x80000)
 
 
 /* Run-time compilation parameters selecting different hardware/software subsets.  */
@@ -50,6 +53,9 @@ extern int target_flags;
 #define TARGET_THUMB_INTERWORK	(target_flags & ARM_FLAG_THUMB)
 
 #define TARGET_LONG_CALLS		(target_flags & ARM_FLAG_LONG_CALLS)
+#define TARGET_JP_PROMOTE	(target_flags & ARM_FLAG_JP_PROMOTE)
+#define TARGET_JP_NOCROSSJUMP	(target_flags & ARM_FLAG_JP_NOCROSSJUMP)
+#define TARGET_JP_REGORDER	(target_flags & ARM_FLAG_JP_REGORDER)
 
 /* SUBTARGET_SWITCHES is used to add flags on a per-config basis. */
 #ifndef SUBTARGET_SWITCHES
@@ -63,6 +69,9 @@ extern int target_flags;
   {"long-calls",		ARM_FLAG_LONG_CALLS,		\
    "Generate all call instructions as indirect calls"},		\
   {"no-long-calls",	       -ARM_FLAG_LONG_CALLS, ""},	\
+  {"jp-promote",		ARM_FLAG_JP_PROMOTE, ""},	\
+  {"jp-nocrossjump",		ARM_FLAG_JP_NOCROSSJUMP, ""},	\
+  {"jp-regorder",		ARM_FLAG_JP_REGORDER, ""},	\
   SUBTARGET_SWITCHES						\
   {"",                          TARGET_DEFAULT}         	\
 }
@@ -346,7 +355,7 @@ do {									\
   if (GET_MODE_CLASS (MODE) == MODE_INT		\
       && GET_MODE_SIZE (MODE) < 4)		\
     {						\
-      (UNSIGNEDP) = 1;				\
+      if (! TARGET_JP_PROMOTE) (UNSIGNEDP) = 1;				\
       (MODE) = SImode;				\
     }						\
 }
@@ -623,6 +632,7 @@ int thumb_shiftable_const ();
 
 /* Passing Arguments on the stack */
 
+#define PROMOTE_FUNCTION_ARGS
 #define PROMOTE_PROTOTYPES 1
 
 #define ACCUMULATE_OUTGOING_ARGS 1
